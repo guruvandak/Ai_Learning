@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Learning Platform</h1>
+            <p>Your journey into artificial intelligence starts here</p>
+        </header>
+        
+        <main>
+            <div class="learning-section">
+                <h2>What would you like to learn today?</h2>
+                <div class="input-group">
+                    <input type="text" id="topicInput" placeholder="Enter AI topic (e.g., machine learning, neural networks)">
+                    <button onclick="startLearning()">Start Learning</button>
+                </div>
+                
+                <div id="learningContent" class="content-area" style="display: none;">
+                    <h3 id="contentTopic"></h3>
+                    <p id="contentDescription"></p>
+                    <div id="contentTips"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
