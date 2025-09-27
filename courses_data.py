@@ -131,8 +131,25 @@ COURSES = {
     }
 }
 
-# User progress tracking structure
-USER_PROGRESS = {}
+# User progress tracking with persistent storage
+import json
+import os
+from datetime import datetime
+
+PROGRESS_FILE = 'user_progress.json'
+
+def load_user_progress():
+    if os.path.exists(PROGRESS_FILE):
+        try:
+            with open(PROGRESS_FILE, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
+    return {}
+
+def save_user_progress(progress_data):
+    with open(PROGRESS_FILE, 'w') as f:
+        json.dump(progress_data, f, indent=2)
 
 def get_all_courses():
     return COURSES
@@ -151,19 +168,24 @@ def get_lesson(course_id, module_id, lesson_id):
     return None
 
 def update_user_progress(user_id, course_id, module_id, lesson_id, completed=True):
-    if user_id not in USER_PROGRESS:
-        USER_PROGRESS[user_id] = {}
+    user_progress = load_user_progress()
     
-    if course_id not in USER_PROGRESS[user_id]:
-        USER_PROGRESS[user_id][course_id] = {}
+    if user_id not in user_progress:
+        user_progress[user_id] = {}
     
-    if module_id not in USER_PROGRESS[user_id][course_id]:
-        USER_PROGRESS[user_id][course_id][module_id] = {}
+    if course_id not in user_progress[user_id]:
+        user_progress[user_id][course_id] = {}
     
-    USER_PROGRESS[user_id][course_id][module_id][lesson_id] = {
+    if module_id not in user_progress[user_id][course_id]:
+        user_progress[user_id][course_id][module_id] = {}
+    
+    user_progress[user_id][course_id][module_id][lesson_id] = {
         'completed': completed,
-        'completed_at': None
+        'completed_at': datetime.now().isoformat() if completed else None
     }
+    
+    save_user_progress(user_progress)
 
 def get_user_progress(user_id):
-    return USER_PROGRESS.get(user_id, {})
+    user_progress = load_user_progress()
+    return user_progress.get(user_id, {})

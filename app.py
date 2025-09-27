@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, jsonify, session
+import os
 import json
-from courses_data import get_all_courses, get_course, get_lesson, update_user_progress, get_user_progress
 import uuid
+from flask import Flask, render_template, request, jsonify, session
+from courses_data import get_all_courses, get_course, get_lesson, update_user_progress, get_user_progress
 
 app = Flask(__name__)
-app.secret_key = 'ai-learning-platform-secret-key-2024'
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 @app.route('/')
 def home():
