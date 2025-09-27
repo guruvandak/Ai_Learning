@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Courses - AI Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Learning Platform</h1>
+            <p>Your journey into artificial intelligence starts here</p>
+        </header>
+        
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/courses" class="nav-link active">Courses</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+        </nav>
+        
+        <main>
+            <div class="courses-section">
+                <h2>Available Courses</h2>
+                <div class="courses-grid">
+                    {% for course_id, course in courses.items() %}
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h3>{{ course.title }}</h3>
+                            <span class="difficulty {{ course.difficulty.lower() }}">{{ course.difficulty }}</span>
+                        </div>
+                        <p class="course-description">{{ course.description }}</p>
+                        <div class="course-meta">
+                            <span class="duration">⏱️ {{ course.duration }}</span>
+                            <span class="modules">📚 {{ course.modules | length }} modules</span>
+                        </div>
+                        <a href="/course/{{ course_id }}" class="course-button">Start Course</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

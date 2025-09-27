@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Learning Platform</h1>
+            <p>Your journey into artificial intelligence starts here</p>
+        </header>
+        
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/courses" class="nav-link">Courses</a>
+            <a href="/dashboard" class="nav-link active">Dashboard</a>
+        </nav>
+        
+        <main>
+            <div class="dashboard-section">
+                <h2>Your Learning Dashboard</h2>
+                
+                <div class="progress-overview">
+                    <div class="stats-card">
+                        <h3>Courses Started</h3>
+                        <div class="stat-number">{{ progress.keys() | list | length }}</div>
+                    </div>
+                    <div class="stats-card">
+                        <h3>Lessons Completed</h3>
+                        <div class="stat-number">
+                            {% set total_completed = [] %}
+                            {% for course_id, course_progress in progress.items() %}
+                                {% for module_id, module_progress in course_progress.items() %}
+                                    {% for lesson_id, lesson_progress in module_progress.items() %}
+                                        {% if lesson_progress.completed %}
+                                            {% set _ = total_completed.append(1) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            {{ total_completed | length }}
+                        </div>
+                    </div>
+                </div>
+                
+                {% if progress %}
+                <div class="course-progress-section">
+                    <h3>Your Course Progress</h3>
+                    {% for course_id, course_progress in progress.items() %}
+                    {% set course = courses[course_id] %}
+                    <div class="progress-card">
+                        <div class="progress-header">
+                            <h4>{{ course.title }}</h4>
+                            <a href="/course/{{ course_id }}" class="continue-button">Continue</a>
+                        </div>
+                        
+                        {% for module in course.modules %}
+                        <div class="module-progress">
+                            <h5>{{ module.title }}</h5>
+                            <div class="lesson-progress-list">
+                                {% for lesson in module.lessons %}
+                                <div class="lesson-progress-item">
+                                    <span class="lesson-name">{{ lesson.title }}</span>
+                                    {% if course_progress.get(module.id, {}).get(lesson.id, {}).get('completed') %}
+                                    <span class="progress-status completed">✓ Completed</span>
+                                    {% else %}
+                                    <span class="progress-status pending">○ Not Started</span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-progress">
+                    <h3>Start Your Learning Journey!</h3>
+                    <p>You haven't started any courses yet. Browse our course catalog to begin learning about AI.</p>
+                    <a href="/courses" class="cta-button">Browse Courses</a>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -13,12 +13,38 @@
             <p>Your journey into artificial intelligence starts here</p>
         </header>
         
+        <nav class="main-nav">
+            <a href="/" class="nav-link active">Home</a>
+            <a href="/courses" class="nav-link">Courses</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+        </nav>
+        
         <main>
             <div class="learning-section">
-                <h2>What would you like to learn today?</h2>
-                <div class="input-group">
-                    <input type="text" id="topicInput" placeholder="Enter AI topic (e.g., machine learning, neural networks)">
-                    <button onclick="startLearning()">Start Learning</button>
+                <h2>Welcome to AI Learning Platform</h2>
+                <p class="subtitle">Choose how you'd like to start your AI journey</p>
+                
+                <div class="learning-options">
+                    <div class="option-card">
+                        <h3>Browse Courses</h3>
+                        <p>Explore our structured curriculum with hands-on lessons</p>
+                        <a href="/courses" class="cta-button">View Courses</a>
+                    </div>
+                    
+                    <div class="option-card">
+                        <h3>Quick Learning</h3>
+                        <p>Get instant insights on any AI topic</p>
+                        <div class="input-group">
+                            <input type="text" id="topicInput" placeholder="Enter AI topic (e.g., machine learning, neural networks)">
+                            <button onclick="startLearning()">Start Learning</button>
+                        </div>
+                    </div>
+                    
+                    <div class="option-card">
+                        <h3>Your Progress</h3>
+                        <p>Track your learning journey and achievements</p>
+                        <a href="/dashboard" class="cta-button">View Dashboard</a>
+                    </div>
                 </div>
                 
                 <div id="learningContent" class="content-area" style="display: none;">

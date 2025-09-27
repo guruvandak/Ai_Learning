@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }} - AI Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Learning Platform</h1>
+            <p>Your journey into artificial intelligence starts here</p>
+        </header>
+        
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/courses" class="nav-link">Courses</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+        </nav>
+        
+        <main>
+            <div class="course-detail-section">
+                <div class="course-info">
+                    <h2>{{ course.title }}</h2>
+                    <p class="course-description">{{ course.description }}</p>
+                    <div class="course-meta">
+                        <span class="difficulty {{ course.difficulty.lower() }}">{{ course.difficulty }}</span>
+                        <span class="duration">⏱️ {{ course.duration }}</span>
+                    </div>
+                </div>
+                
+                <div class="modules-container">
+                    {% for module in course.modules %}
+                    <div class="module-card">
+                        <h3 class="module-title">{{ module.title }}</h3>
+                        <div class="lessons-list">
+                            {% for lesson in module.lessons %}
+                            <div class="lesson-item">
+                                <a href="/lesson/{{ course.id }}/{{ module.id }}/{{ lesson.id }}" class="lesson-link">
+                                    <span class="lesson-title">{{ lesson.title }}</span>
+                                    {% if progress.get(module.id, {}).get(lesson.id, {}).get('completed') %}
+                                    <span class="lesson-status completed">✓</span>
+                                    {% else %}
+                                    <span class="lesson-status pending">○</span>
+                                    {% endif %}
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

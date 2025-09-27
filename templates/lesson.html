@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }} - AI Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Learning Platform</h1>
+            <p>Your journey into artificial intelligence starts here</p>
+        </header>
+        
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/courses" class="nav-link">Courses</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+        </nav>
+        
+        <main>
+            <div class="lesson-section">
+                <div class="lesson-header">
+                    <nav class="breadcrumb">
+                        <a href="/courses">Courses</a> > 
+                        <a href="/course/{{ course_id }}">{{ course.title }}</a> > 
+                        <span>{{ lesson.title }}</span>
+                    </nav>
+                    <h2>{{ lesson.title }}</h2>
+                </div>
+                
+                <div class="lesson-content">
+                    <div class="content-area">
+                        <div class="lesson-text">
+                            {{ lesson.content }}
+                        </div>
+                        
+                        {% if lesson.quiz %}
+                        <div class="quiz-section">
+                            <h3>Knowledge Check</h3>
+                            <div class="quiz-question">
+                                <p><strong>{{ lesson.quiz.question }}</strong></p>
+                                <div class="quiz-options">
+                                    {% for option in lesson.quiz.options %}
+                                    <label class="quiz-option">
+                                        <input type="radio" name="quiz" value="{{ loop.index0 }}" onchange="selectAnswer({{ loop.index0 }})">
+                                        <span>{{ option }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                <button id="submitQuiz" onclick="submitQuiz()" disabled class="quiz-submit">Submit Answer</button>
+                                <div id="quizResult" class="quiz-result" style="display: none;"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="lesson-actions">
+                            <button onclick="markComplete()" class="complete-button">Mark as Complete</button>
+                            <a href="/course/{{ course_id }}" class="back-button">Back to Course</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        const courseId = '{{ course_id }}';
+        const moduleId = '{{ module_id }}';
+        const lessonId = '{{ lesson.id }}';
+        let selectedAnswer = null;
+        
+        function selectAnswer(answerIndex) {
+            selectedAnswer = answerIndex;
+            document.getElementById('submitQuiz').disabled = false;
+        }
+        
+        function submitQuiz() {
+            if (selectedAnswer === null) return;
+            
+            fetch('/api/quiz-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    course_id: courseId,
+                    module_id: moduleId,
+                    lesson_id: lessonId,
+                    answer: selectedAnswer
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('quizResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = `quiz-result ${data.correct ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>${data.message}</strong></p>
+                    ${!data.correct ? `<p>Correct answer: ${data.correct_answer}</p>` : ''}
+                `;
+                
+                if (data.correct) {
+                    setTimeout(() => {
+                        markComplete();
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function markComplete() {
+            fetch('/api/complete-lesson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    course_id: courseId,
+                    module_id: moduleId,
+                    lesson_id: lessonId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = `/course/${courseId}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
